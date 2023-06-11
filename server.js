@@ -12,8 +12,8 @@ const {createMessage, getAll} = require("./controlers/message");
 
 app.use(cors());
 
-const http = require('http').Server(app);
-const socket = require('socket.io')(http, {cors: {origin: "http://localhost:3000"}, });
+const http = require("http").Server(app);
+const socket = require("socket.io")(http, {cors: "http://localhost:3000"});
 
 global.onlineUsers = new Map();
 
@@ -37,7 +37,18 @@ socket.on("connection", (user)=>{
     })
 });
 
-mongoose.connect(DB_HOST);
-app.listen(PORT, () => {console.log('Server run')});
+mongoose.set('strictQuery', false)
+.connect(DB_HOST)
+.then(()=> {
+    http.listen(PORT, () => {
+        console.log('Database connect success')
+    })
+})
+.catch(error => {
+    console.log(error.message)
+    process.exit(1)
+})
+
+
 
 
